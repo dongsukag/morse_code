@@ -2,8 +2,12 @@ name: Morse Time Every 6 Minutes
 
 on:
   schedule:
-    - cron: '*/6 * * * *' # 매 6분마다
+    - cron: "*/6 * * * *" # 6분 마다 반복
+  workflow_dispatch:
 
+permissions:
+  contents: write
+  
 jobs:
   morse-time:
     runs-on: ubuntu-latest
