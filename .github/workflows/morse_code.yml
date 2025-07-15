@@ -33,7 +33,6 @@ jobs:
         run: |
           TIME=$(cat current_time.txt)
           MORSE=$(cat morse_output.txt)
-          # 새 블럭을 임시 파일로 만듭니다
           {
             echo "<!-- MORSE_TIME_START -->"
             echo "_Last updated: \`$TIME\` (UTC)_"
@@ -44,17 +43,14 @@ jobs:
             echo "<!-- MORSE_TIME_END -->"
           } > new_morse_block.txt
 
-          # awk로 마커 블럭을 새 내용으로 교체
           awk '
-            BEGIN {inblock=0}
             /<!-- MORSE_TIME_START -->/ {
               print;
               while ((getline line < "new_morse_block.txt") > 0) print line;
-              inblock=1
-              next
+              block=1; next
             }
-            /<!-- MORSE_TIME_END -->/ {inblock=0; next}
-            inblock==0 {print}
+            /<!-- MORSE_TIME_END -->/ {block=0; next}
+            block==0 {print}
           ' README.md > README.tmp && mv README.tmp README.md
 
       - name: Commit and push if README.md changed
