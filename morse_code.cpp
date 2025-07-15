@@ -133,13 +133,13 @@ int main() {
     std::string morseCodeResult; // 변수명 변경
     std::string decodedSentence; // 변수명 변경
 
-    std::cout << "아래에 영문 텍스트를 입력하세요. 모스 부호로 바꿉니다" << std::endl;
+    std::cout << "현재 시간을 입력하세요. 모스 부호로 바꿉니다" << std::endl;
     std::getline(std::cin, sentence); // '\n' 구분자 불필요
 
     m.text2Morse(sentence, morseCodeResult);
     std::cout << morseCodeResult << std::endl;
 
-    std::cout << "모스 부호를 다시 영문 텍스트로 바꿉니다" << std::endl;
+    std::cout << "모스 부호를 다시 현재 시간으로 바꿉니다" << std::endl;
     m.morse2Text(morseCodeResult, decodedSentence);
     std::cout << decodedSentence << std::endl;
 
