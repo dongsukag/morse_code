@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write
-  
+
 jobs:
   morse-time:
     runs-on: ubuntu-latest
@@ -29,8 +29,21 @@ jobs:
           TIME=$(cat current_time.txt)
           echo "$TIME" | ./morse_code > morse_output.txt
 
-      - name: Output Morse code time
+      - name: Update README.md with current time and Morse code
         run: |
-          echo "Current UTC time: $(cat current_time.txt)"
-          echo "Morse code:"
-          cat morse_output.txt
+          TIME=$(cat current_time.txt)
+          MORSE=$(cat morse_output.txt)
+          # Escape backslashes for sed
+          ESCAPED_MORSE=$(printf '%s\n' "$MORSE" | sed 's/\\/\\\\/g')
+          # Prepare replacement text
+          REPLACEMENT="<!-- MORSE_TIME_START -->\n_Last updated: \`$TIME\` (UTC)_\n\n\`\`\`\n$ESCAPED_MORSE\n\`\`\`\n<!-- MORSE_TIME_END -->"
+          # Use sed to replace the block
+          sed -i -e "/<!-- MORSE_TIME_START -->/,/<!-- MORSE_TIME_END -->/c\\$REPLACEMENT" README.md
+
+      - name: Commit and push if README.md changed
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --cached --quiet || git commit -m "Update Morse code time in README [bot]"
+          git push
