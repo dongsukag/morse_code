@@ -1,0 +1,32 @@
+name: Morse Time Every 6 Minutes
+
+on:
+  schedule:
+    - cron: '*/6 * * * *' # 매 6분마다
+
+jobs:
+  morse-time:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install g++
+        run: sudo apt-get update && sudo apt-get install -y g++
+
+      - name: Build morse_code.cpp
+        run: g++ -o morse_code morse_code.cpp
+
+      - name: Get current time (UTC) and save to file
+        run: date -u '+%H:%M' > current_time.txt
+
+      - name: Run morse_code.cpp to convert time to Morse code
+        run: |
+          TIME=$(cat current_time.txt)
+          echo "$TIME" | ./morse_code > morse_output.txt
+
+      - name: Output Morse code time
+        run: |
+          echo "Current UTC time: $(cat current_time.txt)"
+          echo "Morse code:"
+          cat morse_output.txt
