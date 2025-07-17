@@ -1,9 +1,7 @@
 # morse_code
 # 현재 시간을 모스 부호 표시
 <!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
 _Last updated: `05:01` (UTC)_
-
 ```
 현재 시간을 입력하세요. 모스 부호로 바꿉니다
 ----- ..... ----- .----
@@ -11,32 +9,3 @@ _Last updated: `05:01` (UTC)_
 0501
 ```
 <!-- MORSE_TIME_END -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
-<!-- MORSE_TIME_START -->
