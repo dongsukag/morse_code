@@ -1,8 +1,8 @@
-name: Morse Time Every 6 Minutes
+name: Morse Code Time Update
 
 on:
   schedule:
-    - cron: "*/6 * * * *" # 6분 마다 반복
+    - cron: "*/6 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -19,38 +19,26 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y g++
 
       - name: Build morse_code.cpp
-        run: g++ -o morse_code morse_code.cpp
+        run: g++ morse_code.cpp -o morse_code
 
       - name: Get current time (UTC) and save to file
-        run: date -u '+%H:%M' > current_time.txt
+        run: |
+          date -u +"%H:%M" > current_time.txt
 
       - name: Run morse_code.cpp to convert time to Morse code
         run: |
-          TIME=$(cat current_time.txt)
-          echo "$TIME" | ./morse_code > morse_output.txt
+          ./morse_code < current_time.txt > morse_output.txt
 
       - name: Update README.md with current time and Morse code
         run: |
-          TIME=$(cat current_time.txt)
-          MORSE=$(cat morse_output.txt)
-          {
-            echo "<!-- MORSE_TIME_START -->"
-            echo "_Last updated: \`$TIME\` (UTC)_"
-            echo
-            echo '```'
-            echo "$MORSE"
-            echo '```'
-            echo "<!-- MORSE_TIME_END -->"
-          } > new_morse_block.txt
-
-          awk '
-            /<!-- MORSE_TIME_START -->/ {
-              print;
-              while ((getline line < "new_morse_block.txt") > 0) print line;
-              block=1; next
-            }
-            /<!-- MORSE_TIME_END -->/ {block=0; next}
-            block==0 {print}
+          CURRENT_TIME=$(cat current_time.txt)
+          MORSE_CODE=$(cat morse_output.txt)
+          # Use awk to replace the block between markers
+          awk -v t="$CURRENT_TIME" -v m="$MORSE_CODE" '
+            BEGIN {s=0}
+            /<!-- MORSE_TIME_START -->/ {print; print "_Last updated: `" t "` (UTC)_\n\n```\n" m "\n```"; s=1; next}
+            /<!-- MORSE_TIME_END -->/ {s=0}
+            s==0 {print}
           ' README.md > README.tmp && mv README.tmp README.md
 
       - name: Commit and push if README.md changed
@@ -59,4 +47,5 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
           git diff --cached --quiet || git commit -m "Update Morse code time in README [bot]"
-          git push
+          git pull --rebase origin ${{ github.ref_name }}
+          git push origin ${{ github.ref_name }}
