@@ -21,9 +21,9 @@ jobs:
       - name: Build morse_code.cpp
         run: g++ morse_code.cpp -o morse_code
 
-      - name: Get current time (UTC) and save to file
+      - name: Get current time (KST) and save to file
         run: |
-          date -u +"%H:%M" > current_time.txt
+          TZ=Asia/Seoul date +"%H:%M" > current_time.txt
 
       - name: Run morse_code.cpp to convert time to Morse code
         run: |
@@ -36,7 +36,7 @@ jobs:
           # Use awk to replace the block between markers
           awk -v t="$CURRENT_TIME" -v m="$MORSE_CODE" '
             BEGIN {s=0}
-            /<!-- MORSE_TIME_START -->/ {print; print "_Last updated: `" t "` (UTC)_\n\n```\n" m "\n```"; s=1; next}
+            /<!-- MORSE_TIME_START -->/ {print; print "_Last updated: `" t "` (KST)_\n\n```\n" m "\n```"; s=1; next}
             /<!-- MORSE_TIME_END -->/ {s=0}
             s==0 {print}
           ' README.md > README.tmp && mv README.tmp README.md
