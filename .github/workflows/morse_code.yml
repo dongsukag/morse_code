@@ -1,47 +1,55 @@
-name: Morse Code Time Update
+name: Morse Code Time Update  # 워크플로우 이름 정의
 
 on:
   schedule:
-    - cron: "*/6 * * * *"
-  workflow_dispatch:
+    - cron: "*/6 * * * *"  # 6분마다 자동 실행
+  workflow_dispatch:  # 수동 실행도 가능
 
 permissions:
-  contents: write
+  contents: write  # 리포지토리 파일 수정 권한 부여
 
 jobs:
   morse-time:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 최신 Ubuntu 환경에서 실행
+
     steps:
-      - name: Checkout repository
+      - name: Checkout repository  # 1️⃣ 리포지토리 코드 가져오기
         uses: actions/checkout@v4
 
-      - name: Install g++
+      - name: Install g++  # 2️⃣ C++ 컴파일러 설치
         run: sudo apt-get update && sudo apt-get install -y g++
 
-      - name: Build morse_code.cpp
+      - name: Build morse_code.cpp  # 3️⃣ morse_code.cpp 컴파일
         run: g++ morse_code.cpp -o morse_code
 
-      - name: Get current time (KST) and save to file
+      - name: Get current date and time (KST) and save to file  # 4️⃣ 오늘 날짜와 시간 저장
         run: |
-          TZ=Asia/Seoul date +"%H:%M" > current_time.txt
+          TZ=Asia/Seoul date +"%Y-%m-%d" > current_date.txt   # 오늘 날짜 (예: 2025-10-06)
+          TZ=Asia/Seoul date +"%H:%M" > current_time.txt      # 현재 시간 (예: 14:36)
 
-      - name: Run morse_code.cpp to convert time to Morse code
+      - name: Run morse_code.cpp to convert time to Morse code  # 5️⃣ 모스 코드 변환 실행
         run: |
           ./morse_code < current_time.txt > morse_output.txt
 
-      - name: Update README.md with current time and Morse code
+      - name: Update README.md with date, time, and Morse code  # 6️⃣ README 업데이트
         run: |
-          CURRENT_TIME=$(cat current_time.txt)
-          MORSE_CODE=$(cat morse_output.txt)
-          # Use awk to replace the block between markers
-          awk -v t="$CURRENT_TIME" -v m="$MORSE_CODE" '
+          CURRENT_DATE=$(cat current_date.txt)   # 오늘 날짜 읽기
+          CURRENT_TIME=$(cat current_time.txt)   # 현재 시간 읽기
+          MORSE_CODE=$(cat morse_output.txt)     # 모스 코드 결과 읽기
+
+          # awk로 README의 특정 영역만 교체
+          awk -v d="$CURRENT_DATE" -v t="$CURRENT_TIME" -v m="$MORSE_CODE" '
             BEGIN {s=0}
-            /<!-- MORSE_TIME_START -->/ {print; print "_Last updated: `" t "` (KST)_\n\n```\n" m "\n```"; s=1; next}
+            /<!-- MORSE_TIME_START -->/ {
+              print;
+              print "🗓️ **" d "** | ⏰ **" t " (KST)**\n\n```\n" m "\n```";
+              s=1; next
+            }
             /<!-- MORSE_TIME_END -->/ {s=0}
             s==0 {print}
           ' README.md > README.tmp && mv README.tmp README.md
 
-      - name: Commit and push if README.md changed
+      - name: Commit and push if README.md changed  # 7️⃣ README 변경 시 커밋 및 푸시
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
